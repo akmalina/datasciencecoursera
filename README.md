@@ -1,86 +1,191 @@
-# datasciencecoursera
+How to share data with a statistician
+===========
 
-**Experimental Design**
+This is a guide for anyone who needs to share data with a statistician or data scientist. The target audiences I have in mind are:
 
-Now that we’ve looked at the different types of data science questions, we are going to spend some time looking at experimental design concepts. As a data scientist, you are a scientist and as such, need to have the ability to design proper experiments to best answer your data science questions!
+* Collaborators who need statisticians or data scientists to analyze data for them
+* Students or postdocs in various disciplines looking for consulting advice
+* Junior statistics students whose job it is to collate/clean/wrangle data sets
 
-*What does experimental design mean?*
-Experimental design is organizing an experiment so that you have the correct data (and enough of it!) to clearly and effectively answer your data science question. This process involves clearly formulating your question in advance of any data collection, designing the best set-up possible to gather the data to answer your question, identifying problems or sources of error in your design, and only then, collecting the appropriate data.
+The goals of this guide are to provide some instruction on the best way to share data to avoid the most common pitfalls
+and sources of delay in the transition from data collection to data analysis. The [Leek group](http://biostat.jhsph.edu/~jleek/) works with a large
+number of collaborators and the number one source of variation in the speed to results is the status of the data
+when they arrive at the Leek group. Based on my conversations with other statisticians this is true nearly universally.
 
-*Why should you care?*
-Going into an analysis, you need to have a plan in advance of what you are going to do and how you are going to analyse the data. If you do the wrong analysis, you can come to the wrong conclusions!
+My strong feeling is that statisticians should be able to handle the data in whatever state they arrive. It is important
+to see the raw data, understand the steps in the processing pipeline, and be able to incorporate hidden sources of
+variability in one's data analysis. On the other hand, for many data types, the processing steps are well documented
+and standardized. So the work of converting the data from raw form to directly analyzable form can be performed 
+before calling on a statistician. This can dramatically speed the turnaround time, since the statistician doesn't
+have to work through all the pre-processing steps first. 
 
-We’ve seen many examples of this exact scenario play out in the scientific community over the years - there’s an entire website, Retraction Watch, dedicated to identifying papers that have been retracted, or removed from the literature, as a result of poor scientific practices. And sometimes, those poor practices are a result of poor experimental design and analysis.
 
-Occasionally, these erroneous conclusions can have sweeping effects; particularly in the field of human health. For example, here we have a paper that was trying to predict the effects of a person’s genome on their response to different chemotherapies, to guide which patient receives which drugs to best treat their cancer. As you can see, this paper was retracted, over 4 years after it was initially published. In that time, this data, which was later shown to have numerous problems in their set-up and cleaning, was cited in nearly 450 other papers that may have used these erroneous results to bolster their own research plans. On top of this, this wrongly analysed data was used in clinical trials to determine cancer patient treatment plans. When the stakes are this high, experimental design is paramount.
+What you should deliver to the statistician
+====================
 
-A retracted paper and the forensic analysis of what went wrong
-A retracted paper and the forensic analysis of what went wrong
+To facilitate the most efficient and timely analysis this is the information you should pass to a statistician:
 
-Principles of experimental design
-There are a lot of concepts and terms inherent to experimental design. Let’s go over some of these now!
+1. The raw data.
+2. A [tidy data set](http://vita.had.co.nz/papers/tidy-data.pdf) 
+3. A code book describing each variable and its values in the tidy data set.  
+4. An explicit and exact recipe you used to go from 1 -> 2,3 
 
-Independent variable (AKA factor): The variable that the experimenter manipulates; it does not depend on other variables being measured. Often displayed on the x-axis.
+Let's look at each part of the data package you will transfer. 
 
-Dependent variable: The variable that is expected to change as a result of changes in the independent variable. Often displayed on the y-axis, so that changes in X, the independent variable, effect changes in Y.
 
-So when you are designing an experiment, you have to decide what variables you will measure, and which you will manipulate to effect changes in other measured variables. Additionally, you must develop your hypothesis, essentially an educated guess as to the relationship between your variables and the outcome of your experiment.
+### The raw data
 
-How hypotheses, independent, and dependent variables are related to each other
-How hypotheses, independent, and dependent variables are related to each other
+It is critical that you include the rawest form of the data that you have access to. This ensures
+that data provenance can be maintained throughout the workflow.  Here are some examples of the
+raw form of data:
 
-Let’s do an example experiment now! Let’s say for example that I have a hypothesis that as shoe size increases, literacy also increases. In this case, designing my experiment, I would choose a measure of literacy (eg: reading fluency) as my variable that depends on an individual’s shoe size.
+* The strange [binary file](http://en.wikipedia.org/wiki/Binary_file) your measurement machine spits out
+* The unformatted Excel file with 10 worksheets the company you contracted with sent you
+* The complicated [JSON](http://en.wikipedia.org/wiki/JSON) data you got from scraping the [Twitter API](https://twitter.com/twitterapi)
+* The hand-entered numbers you collected looking through a microscope
 
-My experimental set-up: I hypothesize that literacy level depends on shoe size
-My experimental set-up: I hypothesize that literacy level depends on shoe size
+You know the raw data are in the right format if you: 
 
-To answer this question, I will design an experiment in which I measure the shoe size and literacy level of 100 individuals. Sample size is the number of experimental subjects you will include in your experiment. There are ways to pick an optimal sample size, that you will cover in later courses. Before I collect my data though, I need to consider if there are problems with this experiment that might cause an erroneous result. In this case, my experiment may be fatally flawed by a confounder.
+1. Ran no software on the data
+1. Did not modify any of the data values
+1. You did not remove any data from the data set
+1. You did not summarize the data in any way
 
-Confounder: An extraneous variable that may affect the relationship between the dependent and independent variables.
+If you made any modifications of the raw data it is not the raw form of the data. Reporting modified data
+as raw data is a very common way to slow down the analysis process, since the analyst will often have to do a
+forensic study of your data to figure out why the raw data looks weird. (Also imagine what would happen if new data arrived?)
 
-In our example, since age affects foot size and literacy is affected by age, if we see any relationship between shoe size and literacy, the relationship may actually be due to age – age is “confounding” our experimental design!
+### The tidy data set
 
-To control for this, we can make sure we also measure the age of each individual so that we can take into account the effects of age on literacy, as well. Another way we could control for age’s effect on literacy would be to fix the age of all participants. If everyone we study is the same age, then we have removed the possible effect of age on literacy.
+The general principles of tidy data are laid out by [Hadley Wickham](http://had.co.nz/) in [this paper](http://vita.had.co.nz/papers/tidy-data.pdf)
+and [this video](http://vimeo.com/33727555). While both the paper and the video describe tidy data using [R](http://www.r-project.org/), the principles
+are more generally applicable:
 
-Age is confounding my experimental design! We need to control for this
-Age is confounding my experimental design! We need to control for this
+1. Each variable you measure should be in one column
+1. Each different observation of that variable should be in a different row
+1. There should be one table for each "kind" of variable
+1. If you have multiple tables, they should include a column in the table that allows them to be joined or merged
 
-In other experimental design paradigms, a control group may be appropriate. This is when you have a group of experimental subjects that are not manipulated. So if you were studying the effect of a drug on survival, you would have a group that received the drug (treatment) and a group that did not (control). This way, you can compare the effects of the drug in the treatment versus control group.
+While these are the hard and fast rules, there are a number of other things that will make your data set much easier
+to handle. First is to include a row at the top of each data table/spreadsheet that contains full row names. 
+So if you measured age at diagnosis for patients, you would head that column with the name `AgeAtDiagnosis` instead
+of something like `ADx` or another abbreviation that may be hard for another person to understand. 
 
-A control group is a group of subjects that do not receive the treatment, but still have their dependent variables measured
-A control group is a group of subjects that do not receive the treatment, but still have their dependent variables measured
 
-In these study designs, there are other strategies we can use to control for confounding effects. One, we can blind the subjects to their assigned treatment group. Sometimes, when a subject knows that they are in the treatment group (eg: receiving the experimental drug), they can feel better, not from the drug itself, but from knowing they are receiving treatment. This is known as the placebo effect. To combat this, often participants are blinded to the treatment group they are in; this is usually achieved by giving the control group a mock treatment (eg: given a sugar pill they are told is the drug). In this way, if the placebo effect is causing a problem with your experiment, both groups should experience it equally.
+Here is an example of how this would work from genomics. Suppose that for 20 people you have collected gene expression measurements with 
+[RNA-sequencing](http://en.wikipedia.org/wiki/RNA-Seq). You have also collected demographic and clinical information
+about the patients including their age, treatment, and diagnosis. You would have one table/spreadsheet that contains the clinical/demographic
+information. It would have four columns (patient id, age, treatment, diagnosis) and 21 rows (a row with variable names, then one row
+for every patient). You would also have one spreadsheet for the summarized genomic data. Usually this type of data
+is summarized at the level of the number of counts per exon. Suppose you have 100,000 exons, then you would have a
+table/spreadsheet that had 21 rows (a row for gene names, and one row for each patient) and 100,001 columns (one row for patient
+ids and one row for each data type). 
 
-Blinding your study means that your subjects don’t know what group they belong to - all participants receive a treatment
-Blinding your study means that your subjects don’t know what group they belong to - all participants receive a “treatment”
+If you are sharing your data with the collaborator in Excel, the tidy data should be in one Excel file per table. They
+should not have multiple worksheets, no macros should be applied to the data, and no columns/cells should be highlighted. 
+Alternatively share the data in a [CSV](http://en.wikipedia.org/wiki/Comma-separated_values) or [TAB-delimited](http://en.wikipedia.org/wiki/Tab-separated_values) text file. (Beware however that reading CSV files into Excel can sometimes lead to non-reproducible handling of date and time variables.)
 
-And this strategy is at the heart of many of these studies; spreading any possible confounding effects equally across the groups being compared. For example, if you think age is a possible confounding effect, making sure that both groups have similar ages and age ranges will help to mitigate any effect age may be having on your dependent variable - the effect of age is equal between your two groups.
 
-This “balancing” of confounders is often achieved by randomization. Generally, we don’t know what will be a confounder beforehand; to help lessen the risk of accidentally biasing one group to be enriched for a confounder, you can randomly assign individuals to each of your groups. This means that any potential confounding variables should be distributed between each group roughly equally, to help eliminate/reduce systematic errors.
+### The code book
 
-Randomizing subjects to either the control or treatment group is a great strategy to reduce confounders’ effects
-Randomizing subjects to either the control or treatment group is a great strategy to reduce confounders’ effects
+For almost any data set, the measurements you calculate will need to be described in more detail than you can or should sneak
+into the spreadsheet. The code book contains this information. At minimum it should contain:
 
-There is one final concept of experimental design that we need to cover in this lesson, and that is replication. Replication is pretty much what it sounds like, repeating an experiment with different experimental subjects. A single experiment’s results may have occured by chance; a confounder was unevenly distributed across your groups, there was a systematic error in the data collection, there were some outliers, etc. However, if you can repeat the experiment and collect a whole new set of data and still come to the same conclusion, your study is much stronger. Also at the heart of replication is that it allows you to measure the variability of your data more accurately, which allows you to better assess whether any differences you see in your data are significant.
+1. Information about the variables (including units!) in the data set not contained in the tidy data 
+1. Information about the summary choices you made
+1. Information about the experimental study design you used
 
-Replication studies are a great way to bolster your experimental results and get measures of variability in your data
-Replication studies are a great way to bolster your experimental results and get measures of variability in your data
+In our genomics example, the analyst would want to know what the unit of measurement for each
+clinical/demographic variable is (age in years, treatment by name/dose, level of diagnosis and how heterogeneous). They 
+would also want to know how you picked the exons you used for summarizing the genomic data (UCSC/Ensembl, etc.). They
+would also want to know any other information about how you did the data collection/study design. For example,
+are these the first 20 patients that walked into the clinic? Are they 20 highly selected patients by some characteristic
+like age? Are they randomized to treatments? 
 
-Sharing data
-Once you’ve collected and analysed your data, one of the next steps of being a good citizen scientist is to share your data and code for analysis. Now that you have a GitHub account and we’ve shown you how to keep your version controlled data and analyses on GitHub, this is a great place to share your code!
+A common format for this document is a Word file. There should be a section called "Study design" that has a thorough
+description of how you collected the data. There is a section called "Code book" that describes each variable and its
+units. 
 
-In fact, hosted on GitHub, our group, the Leek group, has developed a guide that has great advice for how to best share data!
+### How to code variables
 
-Beware p-hacking!
-One of the many things often reported in experiments is a value called the p-value. This is a value that tells you the probability that the results of your experiment were observed by chance. This is a very important concept in statistics that we won’t be covering in depth here, if you want to know more, check out this video explaining more about p-values.
+When you put variables into a spreadsheet there are several main categories you will run into depending on their [data type](http://en.wikipedia.org/wiki/Statistical_data_type):
 
-What you need to look out for is when you manipulate p-values towards your own end. Often, when your p-value is less than 0.05 (in other words, there is a 5 percent chance that the differences you saw were observed by chance), a result is considered significant. But if you do 20 tests, by chance, you would expect one of the twenty (5%) to be significant. In the age of big data, testing twenty hypotheses is a very easy proposition. And this is where the term p-hacking comes from: This is when you exhaustively search a data set to find patterns and correlations that appear statistically significant by virtue of the sheer number of tests you have performed. These spurious correlations can be reported as significant and if you perform enough tests, you can find a data set and analysis that will show you what you wanted to see.
+1. Continuous
+1. Ordinal
+1. Categorical
+1. Missing 
+1. Censored
 
-Check out this FiveThirtyEight activity where you can manipulate and filter data and perform a series of tests such that you can get the data to find whatever relationship you want!
+Continuous variables are anything measured on a quantitative scale that could be any fractional number. An example
+would be something like weight measured in kg. [Ordinal data](http://en.wikipedia.org/wiki/Ordinal_data) are data that have a fixed, small (< 100) number of levels but are ordered. 
+This could be for example survey responses where the choices are: poor, fair, good. [Categorical data](http://en.wikipedia.org/wiki/Categorical_variable) are data where there
+are multiple categories, but they aren't ordered. One example would be sex: male or female. This coding is attractive because it is self-documenting.  [Missing data](http://en.wikipedia.org/wiki/Missing_data) are data
+that are unobserved and you don't know the mechanism. You should code missing values as `NA`. [Censored data](http://en.wikipedia.org/wiki/Censoring_\(statistics\)) are data
+where you know the missingness mechanism on some level. Common examples are a measurement being below a detection limit
+or a patient being lost to follow-up. They should also be coded as `NA` when you don't have the data. But you should
+also add a new column to your tidy data called, "VariableNameCensored" which should have values of `TRUE` if censored 
+and `FALSE` if not. In the code book you should explain why those values are missing. It is absolutely critical to report
+to the analyst if there is a reason you know about that some of the data are missing. You should also not [impute](http://en.wikipedia.org/wiki/Imputation_\(statistics\))/make up/
+throw away missing observations.
 
-XKCD mocks this concept in a comic testing the link between jelly beans and acne - clearly there is no link there, but if you test enough jelly bean colours, eventually, one of them will be correlated with acne at p-value < 0.05!
+In general, try to avoid coding categorical or ordinal variables as numbers. When you enter the value for sex in the tidy
+data, it should be "male" or "female". The ordinal values in the data set should be "poor", "fair", and "good" not 1, 2 ,3.
+This will avoid potential mixups about which direction effects go and will help identify coding errors. 
 
-*Summary*
+Always encode every piece of information about your observations using text. For example, if you are storing data in Excel and use a form of colored text or cell background formatting to indicate information about an observation ("red variable entries were observed in experiment 1.") then this information will not be exported (and will be lost!) when the data is exported as raw text.  Every piece of data should be encoded as actual text that can be exported.  
 
-In this lesson we covered what experimental design is and why good experimental design matters. We then looked in depth to the principles of experimental design and defined some of the common terms you need to consider when designing an experiment. Next, we detoured a bit to see how you should share your data and code for analysis. And finally, we looked at the dangers of p-hacking and manipulating data to achieve significance.
+### The instruction list/script
+
+You may have heard this before, but [reproducibility is a big deal in computational science](http://www.sciencemag.org/content/334/6060/1226).
+That means, when you submit your paper, the reviewers and the rest of the world should be able to exactly replicate
+the analyses from raw data all the way to final results. If you are trying to be efficient, you will likely perform
+some summarization/data analysis steps before the data can be considered tidy. 
+
+The ideal thing for you to do when performing summarization is to create a computer script (in `R`, `Python`, or something else) 
+that takes the raw data as input and produces the tidy data you are sharing as output. You can try running your script
+a couple of times and see if the code produces the same output. 
+
+In many cases, the person who collected the data has incentive to make it tidy for a statistician to speed the process
+of collaboration. They may not know how to code in a scripting language. In that case, what you should provide the statistician
+is something called [pseudocode](http://en.wikipedia.org/wiki/Pseudocode). It should look something like:
+
+1. Step 1 - take the raw file, run version 3.1.2 of summarize software with parameters a=1, b=2, c=3
+1. Step 2 - run the software separately for each sample
+1. Step 3 - take column three of outputfile.out for each sample and that is the corresponding row in the output data set
+
+You should also include information about which system (Mac/Windows/Linux) you used the software on and whether you 
+tried it more than once to confirm it gave the same results. Ideally, you will run this by a fellow student/labmate
+to confirm that they can obtain the same output file you did. 
+
+
+
+
+What you should expect from the analyst
+====================
+
+When you turn over a properly tidied data set it dramatically decreases the workload on the statistician. So hopefully
+they will get back to you much sooner. But most careful statisticians will check your recipe, ask questions about
+steps you performed, and try to confirm that they can obtain the same tidy data that you did with, at minimum, spot
+checks.
+
+You should then expect from the statistician:
+
+1. An analysis script that performs each of the analyses (not just instructions)
+1. The exact computer code they used to run the analysis
+1. All output files/figures they generated. 
+
+This is the information you will use in the supplement to establish reproducibility and precision of your results. Each
+of the steps in the analysis should be clearly explained and you should ask questions when you don't understand
+what the analyst did. It is the responsibility of both the statistician and the scientist to understand the statistical
+analysis. You may not be able to perform the exact analyses without the statistician's code, but you should be able
+to explain why the statistician performed each step to a labmate/your principal investigator. 
+
+
+Contributors
+====================
+
+* [Jeff Leek](http://biostat.jhsph.edu/~jleek/) - Wrote the initial version.
+* [L. Collado-Torres](http://bit.ly/LColladoTorres) - Fixed typos, added links.
+* [Nick Reich](http://people.umass.edu/nick/) - Added tips on storing data as text.
+* [Nick Horton](https://www.amherst.edu/people/facstaff/nhorton) - Minor wording suggestions.
+
